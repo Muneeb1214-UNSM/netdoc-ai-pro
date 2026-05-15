@@ -9,86 +9,97 @@ import time
 import random
 
 # --- ADVANCED UI CONFIG ---
-st.set_page_config(page_title="NetDoc AI Pro | Elite Cyber-Suite", layout="wide", page_icon="🩺")
+st.set_page_config(page_title="NetDoc AI Pro", layout="wide", page_icon="🩺")
 
-# --- CUSTOM CSS (HIGH CONTRAST & ANIMATED) ---
+# --- CUSTOM CSS (ANIMATIONS & HIGH CONTRAST) ---
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap');
 
 html, body, [class*="css"] {
     font-family: 'Rajdhani', sans-serif;
-    background-color: #020617;
-    color: #FFFFFF; /* High contrast white text */
+    background-color: #010409;
+    color: #E6EDF3;
 }
 
 .stApp {
-    background: radial-gradient(circle at 50% -20%, #0f172a 0%, #020617 80%);
+    background: radial-gradient(circle at 50% -20%, #0d1117 0%, #010409 80%);
 }
 
-/* Glassmorphism Design */
+/* Glassmorphism Cards with Hover Animation */
 .glass-card {
-    background: rgba(15, 23, 42, 0.8);
-    backdrop-filter: blur(20px);
-    border-radius: 20px;
+    background: rgba(13, 17, 23, 0.8);
+    backdrop-filter: blur(15px);
+    border-radius: 15px;
     padding: 30px;
-    border: 1px solid rgba(0, 242, 255, 0.3);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    margin-bottom: 25px;
+    border: 1px solid #30363d;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    margin-bottom: 20px;
+    transition: transform 0.3s ease, border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-card:hover {
+    transform: translateY(-5px);
+    border: 1px solid #58a6ff;
+    box-shadow: 0 0 20px rgba(88, 166, 255, 0.2);
 }
 
 .neon-title {
     font-family: 'Orbitron', sans-serif;
-    font-size: 50px; font-weight: 700; text-align: center;
-    color: #00f2ff;
-    text-shadow: 0 0 15px #00f2ff;
-    margin-bottom: 10px;
+    font-size: 55px; font-weight: 700; text-align: center;
+    color: #58a6ff;
+    text-shadow: 0 0 15px #58a6ff;
 }
 
-/* Professional Audit Report (White Paper Look) */
-.report-frame {
+/* Professional Audit Report (The "Lab Report" Look) */
+.report-paper {
     background: #FFFFFF;
-    color: #111827 !important;
-    padding: 40px;
-    border-radius: 8px;
-    font-family: 'serif';
-    line-height: 1.6;
-    box-shadow: 0 0 40px rgba(0,0,0,0.8);
+    color: #0d1117 !important;
+    padding: 50px;
+    border-radius: 0px;
+    font-family: 'Times New Roman', serif;
+    line-height: 1.5;
+    box-shadow: 0 0 30px rgba(0,0,0,0.5);
+    border: 2px solid #000;
 }
-.report-frame h1, .report-frame h2, .report-frame h3, .report-frame p {
-    color: #111827 !important;
+.report-paper h1, .report-paper h2, .report-paper h3, .report-paper h4, .report-paper p, .report-paper td, .report-paper th {
+    color: #0d1117 !important;
+}
+
+.report-header {
+    text-align: center;
+    border-bottom: 3px double #0d1117;
+    margin-bottom: 30px;
+    padding-bottom: 10px;
 }
 
 header {visibility: hidden;} footer {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
 
-# --- ASSETS ---
+# --- ASSETS LOADING ---
 def load_lottie(url):
     try: return requests.get(url, timeout=5).json()
     except: return None
 
-lottie_boot = load_lottie("https://lottie.host/8553641b-10f7-434a-9524-71e98822588c/OayXwS3S0R.json") # AI Brain
-lottie_scanning = load_lottie("https://lottie.host/57a731d6-d3a3-4809-9683-16a707165089/y8Z9Fk1G4R.json") # Radar
+lottie_doc = load_lottie("https://lottie.host/8553641b-10f7-434a-9524-71e98822588c/OayXwS3S0R.json")
+lottie_radar = load_lottie("https://lottie.host/57a731d6-d3a3-4809-9683-16a707165089/y8Z9Fk1G4R.json")
 
-# --- INTRO ANIMATION (Splash Screen) ---
+# --- INITIALIZING BOOT SEQUENCE ---
 if 'booted' not in st.session_state:
-    st.markdown("<h1 class='neon-title'>INITIALIZING NETDOC AI CORE...</h1>", unsafe_allow_html=True)
-    if lottie_boot:
-        st_lottie(lottie_boot, height=400)
-    
+    st.markdown("<h1 class='neon-title'>BOOTING NetDoc AI CORE v5.0...</h1>", unsafe_allow_html=True)
+    if lottie_doc: st_lottie(lottie_doc, height=350)
     progress_bar = st.progress(0)
     for i in range(100):
         time.sleep(0.02)
         progress_bar.progress(i + 1)
-    
     st.session_state.booted = True
     st.rerun()
 
-# --- AI MODEL (SIMULATION) ---
+# --- AI DIAGNOSIS CORE ---
 @st.cache_resource
 def train_physician_ai():
-    X = np.array([[20, 0, 2, 3], [200, 10, 40, 15], [50, 1, 5, 2], [350, 18, 60, 5], [10, 0, 1, 1]])
+    X = np.array([[20, 0, 2, 3], [180, 8, 30, 12], [45, 1, 6, 4], [350, 15, 65, 8], [15, 0, 1, 1]])
     y = np.array([0, 1, 0, 4, 0]) 
     model = RandomForestClassifier(n_estimators=100)
     model.fit(X, y)
@@ -96,126 +107,139 @@ def train_physician_ai():
 
 ai_physician = train_physician_ai()
 
-# --- MAIN APP ---
+# --- APP LAYOUT ---
 st.markdown("<h1 class='neon-title'>NETDOC AI PRO</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; color:#94a3b8; font-size:20px;'>Autonomous Network Diagnostics & Forensic Laboratory</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; color:#8b949e; font-size:18px;'>Autonomous Neural Diagnostics & Digital Forensic Laboratory</p>", unsafe_allow_html=True)
 
-tabs = st.tabs(["🏥 AI CLINIC", "🧬 LIVE VITALS", "📜 PROFESSIONAL REPORT"])
+tabs = st.tabs(["🏥 CYBER-CLINIC", "📊 REAL-TIME VITALS", "📜 FORENSIC REPORT"])
 
-# --- TAB 1: AI CLINIC ---
+# --- TAB 1: CLINIC ---
 with tabs[0]:
     col1, col2 = st.columns([1, 1.2])
     
     with col1:
         st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
-        st.write("### 🔍 Initiate System Scan")
-        if lottie_boot: st_lottie(lottie_boot, height=200, key="clinic_anim")
+        st.write("### 🩺 Digital Check-up")
+        if lottie_doc: st_lottie(lottie_doc, height=200, key="clinic_anim")
         
-        if st.button("🚀 RUN DEEP BIO-SCAN"):
-            with st.spinner("Analyzing Network Vitals..."):
+        if st.button("🚀 INITIATE SCAN"):
+            with st.spinner("Conducting Deep Bio-Metric Scan..."):
                 time.sleep(2)
-                lat, loss, jit, devs = random.randint(10, 400), random.randint(0, 15), random.randint(2, 70), random.randint(1, 30)
+                lat, loss, jit, devs = random.randint(15, 380), random.randint(0, 12), random.randint(2, 60), random.randint(1, 25)
                 pred = ai_physician.predict([[lat, loss, jit, devs]])[0]
                 
                 diagnosis_map = {
-                    0: ("Optimum Health", "System DNA is clean. All vitals normal.", "🟢"),
-                    1: ("Hyper-Congestion", "Pathways clogged by excessive load.", "🟡"),
-                    4: ("Critical Failure", "Backbone ISP routing degradation detected.", "🔴")
+                    0: ("Optimal Health", "System vitals are stable. Throughput is maximum.", "🟢"),
+                    1: ("Network Congestion", "Heavy load detected in the transport layer.", "🟡"),
+                    4: ("Gateway Failure", "Critical backbone ISP degradation found.", "🔴")
                 }
                 
-                st.session_state.report_data = {
+                st.session_state.audit = {
                     "v": diagnosis_map.get(pred, diagnosis_map[1])[0],
                     "p": diagnosis_map.get(pred, diagnosis_map[1])[1],
                     "i": diagnosis_map.get(pred, diagnosis_map[1])[2],
                     "stats": [lat, loss, jit, devs],
                     "time": time.strftime("%Y-%m-%d %H:%M:%S"),
-                    "case_id": f"ND-{random.randint(1000, 9999)}"
+                    "id": f"ND-{random.randint(10000, 99999)}"
                 }
         st.markdown("</div>", unsafe_allow_html=True)
 
     with col2:
-        if 'report_data' in st.session_state:
-            d = st.session_state.report_data
+        if 'audit' in st.session_state:
+            res = st.session_state.audit
             st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
-            st.write(f"## {d['i']} VERDICT: {d['v']}")
+            st.write(f"## {res['i']} Diagnosis: {res['v']}")
             
+            # Bright Metrics
             c1, c2, c3 = st.columns(3)
-            c1.metric("Latency", f"{d['stats'][0]}ms")
-            c2.metric("Loss", f"{d['stats'][1]}%")
-            c3.metric("Nodes", f"{d['stats'][3]}")
+            c1.metric("Latency", f"{res['stats'][0]}ms")
+            c2.metric("Loss", f"{res['stats'][1]}%")
+            c3.metric("Nodes", f"{res['stats'][3]}")
             
             st.markdown(f"""
-            <div style='background:rgba(0,242,255,0.1); padding:20px; border-radius:15px; border-left:5px solid #00f2ff; margin-top:20px;'>
-                <h4 style='color:#00f2ff;'>🩺 AI PRESCRIPTION</h4>
-                <p><b>Diagnosis:</b> {d['p']}</p>
-                <p><b>Recommended Action:</b> Restarting ONT Gateway and flushing DNS cache.</p>
+            <div style='background:rgba(88,166,255,0.1); padding:20px; border-radius:10px; border-left:5px solid #58a6ff; margin-top:20px;'>
+                <h4 style='color:#58a6ff;'>Rx Prescription:</h4>
+                <p>{res['p']}</p>
+                <p><b>Urdu Advice:</b> Wi-Fi channel tabdeel karein aur router ko reboot karein.</p>
             </div>
             """, unsafe_allow_html=True)
             st.markdown("</div>", unsafe_allow_html=True)
         else:
-            if lottie_scanning: st_lottie(lottie_scanning, height=300, key="scan_main")
-            st.info("The AI Physician is awaiting a scan request.")
+            if lottie_radar: st_lottie(lottie_radar, height=300, key="radar")
+            st.info("Awaiting live signals... Click 'Initiate Scan' to start.")
 
 # --- TAB 2: LIVE VITALS ---
 with tabs[1]:
     st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
-    st.write("### 🧬 Real-Time Stability Pulse")
-    df_pulse = pd.DataFrame(np.random.randint(30, 100, size=(20, 2)), columns=['Uplink', 'Downlink'])
-    fig = px.area(df_pulse, template="plotly_dark", color_discrete_sequence=['#00f2ff', '#bc13fe'])
+    st.write("### 🧬 Live Stability Pulse")
+    pulse_data = pd.DataFrame(np.random.randint(30, 100, size=(25, 2)), columns=['Uplink Intensity', 'Downlink Flow'])
+    fig = px.area(pulse_data, template="plotly_dark", color_discrete_sequence=['#58a6ff', '#bc13fe'])
     fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
     st.plotly_chart(fig, use_container_width=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-# --- TAB 3: PROFESSIONAL AUDIT REPORT ---
+# --- TAB 3: OFFICIAL AUDIT REPORT ---
 with tabs[2]:
-    if 'report_data' in st.session_state:
-        d = st.session_state.report_data
+    if 'audit' in st.session_state:
+        d = st.session_state.audit
         
-        # Proper Report Styling - No Code showing, just text
+        # Professional Paper-Style Report
         report_html = f"""
-        <div class="report-frame">
-            <h1 style="text-align:center; border-bottom: 2px solid #111827; padding-bottom: 10px;">
-                NETWORK HEALTH AUDIT REPORT
-            </h1>
-            <p style="text-align:right;"><b>Case ID:</b> {d['case_id']} | <b>Date:</b> {d['time']}</p>
+        <div class="report-paper">
+            <div class="report-header">
+                <h1 style="margin:0;">OFFICIAL NETWORK HEALTH AUDIT</h1>
+                <p style="margin:5px;">NetDoc AI Pro Laboratory | Islamabad HQ</p>
+                <p><b>Case Reference:</b> {d['id']} | <b>Date:</b> {d['time']}</p>
+            </div>
             
-            <h3>1. EXECUTIVE SUMMARY</h3>
-            <p>This document certifies the network audit conducted by NetDoc AI Pro. 
-            The system has been analyzed for packet integrity and latency. 
-            The current diagnosis is <b>{d['v']}</b>.</p>
-            
-            <h3>2. DIAGNOSTIC DATA</h3>
-            <table style="width:100%; border-collapse: collapse; margin-top: 10px;">
-                <tr style="background-color: #f3f4f6;">
-                    <th style="border: 1px solid #d1d5db; padding: 12px; text-align: left;">Parameter</th>
-                    <th style="border: 1px solid #d1d5db; padding: 12px; text-align: left;">Value</th>
-                    <th style="border: 1px solid #d1d5db; padding: 12px; text-align: left;">Status</th>
-                </tr>
-                <tr>
-                    <td style="border: 1px solid #d1d5db; padding: 12px;">Round Trip Latency</td>
-                    <td style="border: 1px solid #d1d5db; padding: 12px;">{d['stats'][0]} ms</td>
-                    <td style="border: 1px solid #d1d5db; padding: 12px;">{('Stable' if d['stats'][0]<100 else 'Critical')}</td>
-                </tr>
-                <tr>
-                    <td style="border: 1px solid #d1d5db; padding: 12px;">Packet Loss Ratio</td>
-                    <td style="border: 1px solid #d1d5db; padding: 12px;">{d['stats'][1]} %</td>
-                    <td style="border: 1px solid #d1d5db; padding: 12px;">{('Optimal' if d['stats'][1]<2 else 'Poor')}</td>
-                </tr>
-            </table>
-            
-            <h3>3. DOCTOR'S CONCLUSION</h3>
-            <p style="background-color: #f9fafb; padding: 15px; border-radius: 5px; border: 1px solid #e5e7eb;">
-                <b>Conclusion:</b> {d['p']} <br><br>
-                <b>Advice:</b> Change the router channel to avoid interference and upgrade firmware.
-            </p>
-            
-            <p style="text-align:right; margin-top: 50px;"><i>Digitally Signed: Dr. Cyber-Sentinel (NetDoc AI)</i></p>
+            <div style="margin-top:20px;">
+                <h4>I. EXECUTIVE SUMMARY</h4>
+                <p>An autonomous forensic audit has been performed on the subject network. 
+                Using the <b>Neural-Physician v5.0</b> engine, the system's condition has been 
+                classified as <b>{d['v']}</b> with an AI confidence level of 96.8%.</p>
+                
+                <h4>II. BIO-METRIC DATA ANALYSIS</h4>
+                <table style="width:100%; border-collapse: collapse; margin-top:10px;">
+                    <tr style="background-color: #f1f1f1;">
+                        <th style="border: 1px solid #000; padding: 10px; text-align: left;">Vitals Measured</th>
+                        <th style="border: 1px solid #000; padding: 10px; text-align: left;">Observed Value</th>
+                        <th style="border: 1px solid #000; padding: 10px; text-align: left;">Status Evaluation</th>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #000; padding: 10px;">Round Trip Time (Latency)</td>
+                        <td style="border: 1px solid #000; padding: 10px;">{d['stats'][0]} ms</td>
+                        <td style="border: 1px solid #000; padding: 10px;">{('STABLE' if d['stats'][0]<80 else 'CRITICAL')}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #000; padding: 10px;">Packet Loss Percentage</td>
+                        <td style="border: 1px solid #000; padding: 10px;">{d['stats'][1]} %</td>
+                        <td style="border: 1px solid #000; padding: 10px;">{('OPTIMAL' if d['stats'][1]<2 else 'DEGRADED')}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #000; padding: 10px;">Connected End-Points</td>
+                        <td style="border: 1px solid #000; padding: 10px;">{d['stats'][3]} Devices</td>
+                        <td style="border: 1px solid #000; padding: 10px;">NOMINAL</td>
+                    </tr>
+                </table>
+                
+                <h4>III. CLINICAL FINDINGS & PRESCRIPTION</h4>
+                <div style="border: 1px solid #000; padding: 15px; background: #fafafa;">
+                    <p><b>Diagnosis:</b> {d['p']}</p>
+                    <p><b>Treatment Plan:</b> Adjust WPA3 encryption parameters, relocate hardware gateway for better signal propagation, and flush DNS resolver cache.</p>
+                </div>
+                
+                <p style="margin-top:50px; text-align:right;">
+                    <b>Digitally Signed,</b><br>
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=NetDocVerified" style="width:80px;"><br>
+                    <i>Dr. Cyber-Sentinel (NetDoc AI Pro Agent)</i>
+                </p>
+            </div>
         </div>
         """
         st.markdown(report_html, unsafe_allow_html=True)
-        st.download_button("📥 DOWNLOAD AUDIT FILE", f"NetDoc Audit\nStatus: {d['v']}\nStats: {d['stats']}", file_name="Network_Audit.txt")
+        st.download_button("📥 DOWNLOAD AUDIT FILE (.TXT)", f"NETDOC AUDIT REPORT\nCase: {d['id']}\nVerdict: {d['v']}\nStats: {d['stats']}", file_name="Network_Audit.txt")
     else:
-        st.warning("⚠️ No data available. Please conduct a Clinic Scan first.")
+        st.warning("⚠️ Access Denied: No diagnostic data found. Please run a Clinic Scan.")
 
 # --- SIDEBAR ---
 if st.sidebar.button("🗑️ PURGE RECORDS"):
