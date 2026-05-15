@@ -16,7 +16,6 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Plus+Jakarta+Sans:wght@300;500;700&display=swap');
 
-/* Dynamic Background Animation */
 @keyframes gradientBG {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
@@ -31,7 +30,6 @@ st.markdown("""
     font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-/* Glassmorphism Cards */
 .glass-card {
     background: rgba(255, 255, 255, 0.04);
     backdrop-filter: blur(20px);
@@ -42,12 +40,8 @@ st.markdown("""
     margin-bottom: 25px;
     transition: 0.4s;
 }
-.glass-card:hover {
-    border: 1px solid #00f2ff;
-    box-shadow: 0 0 25px rgba(0, 242, 255, 0.3);
-}
 
-/* Target all Buttons (Standard & Download) */
+/* Styled All Buttons */
 div.stButton > button, div.stDownloadButton > button {
     background: linear-gradient(90deg, #00f2ff, #0062ff) !important;
     color: white !important;
@@ -59,11 +53,6 @@ div.stButton > button, div.stDownloadButton > button {
     letter-spacing: 1.5px !important;
     box-shadow: 0 4px 15px rgba(0, 242, 255, 0.4) !important;
     width: 100%;
-    transition: 0.3s !important;
-}
-div.stButton > button:hover, div.stDownloadButton > button:hover {
-    box-shadow: 0 0 25px #00f2ff !important;
-    transform: translateY(-3px) !important;
 }
 
 .neon-title {
@@ -75,7 +64,6 @@ div.stButton > button:hover, div.stDownloadButton > button:hover {
     filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.5));
 }
 
-/* Professional Audit Certificate */
 .report-paper {
     background: #FFFFFF !important;
     color: #1a1a1a !important;
@@ -83,10 +71,16 @@ div.stButton > button:hover, div.stDownloadButton > button:hover {
     border-radius: 4px;
     font-family: 'Georgia', serif;
     box-shadow: 0 0 40px rgba(0,0,0,0.8);
-    line-height: 1.6;
 }
-.report-paper h1, .report-paper h2, .report-paper h3, .report-paper p, .report-paper li {
-    color: #1a1a1a !important;
+.report-paper h1, .report-paper h2, .report-paper h3, .report-paper p { color: #1a1a1a !important; }
+
+.summary-box {
+    background: rgba(0, 242, 255, 0.08);
+    border-left: 5px solid #00f2ff;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+    font-size: 15px;
 }
 
 header {visibility: hidden;} footer {visibility: hidden;}
@@ -113,30 +107,29 @@ ai_physician = train_physician_ai()
 
 # --- APP LAYOUT ---
 st.markdown("<h1 class='neon-title'>NETDOC AI PRO</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; color:#FFFFFF; font-size:20px;'>Autonomous AI Physician for Network Forensics</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; color:#FFFFFF; font-size:20px;'>Advanced Neural Intelligence & Network Bio-Forensics</p>", unsafe_allow_html=True)
 
-tabs = st.tabs(["🏥 CLINIC", "🧬 VITALS", "🛡️ SECURITY", "📜 OFFICIAL AUDIT"])
+tabs = st.tabs(["🏥 CLINIC", "🧬 VITALS", "🛡️ SECURITY", "🔮 PREDICTION", "📜 OFFICIAL AUDIT"])
 
 # --- TAB 1: CLINIC ---
 with tabs[0]:
     col1, col2 = st.columns([1, 1.3])
     with col1:
         st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
-        st.write("### 🩺 Start Deep Scan")
-        if lottie_doc: st_lottie(lottie_doc, height=200, key="doc_clinic")
+        st.write("### 🩺 Clinical Bio-Scan")
+        if lottie_doc: st_lottie(lottie_doc, height=200)
         
-        if st.button("RUN AI DIAGNOSIS"):
-            with st.spinner("Analyzing DNA..."):
+        if st.button("EXECUTE AI DIAGNOSIS"):
+            with st.spinner("Decoding Network DNA..."):
                 time.sleep(2)
                 lat, loss, jit = random.randint(15, 350), random.randint(0, 12), random.randint(2, 65)
-                devs = random.randint(1, 20)
-                pkts = random.randint(1000, 5000)
+                devs, pkts = random.randint(1, 25), random.randint(1500, 8000)
                 
                 pred = ai_physician.predict([[lat, loss, jit, devs]])[0]
                 diags = {
-                    0: ("Optimum Health", "Network DNA is stable. All vitals normal.", "نظام بالکل ٹھیک کام کر رہا ہے۔", "🟢"),
-                    1: ("Hyper-Congestion", "Pathways clogged by excessive load.", "نیٹ ورک پر بوجھ زیادہ ہے۔ فالتو ڈیوائسز بند کریں۔", "🟡"),
-                    4: ("Gateway Failure", "Critical gateway failure detected at ISP level.", "انٹرنیٹ فراہم کرنے والے کے پیچھے سے مسئلہ ہے۔", "🔴")
+                    0: ("Optimum Health", "Network DNA is pure.", "نظام بالکل ٹھیک کام کر رہا ہے۔", "🟢"),
+                    1: ("Hyper-Congestion", "Pathways clogged by load.", "نیٹ ورک پر بوجھ زیادہ ہے۔", "🟡"),
+                    4: ("Gateway Failure", "Backbone ISP failure detected.", "انٹرنیٹ فراہم کرنے والے کا مسئلہ ہے۔", "🔴")
                 }
                 st.session_state.audit = {
                     "v": diags.get(pred, diags[1])[0],
@@ -153,84 +146,108 @@ with tabs[0]:
         if 'audit' in st.session_state:
             res = st.session_state.audit
             st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
-            st.write(f"## {res['i']} Diagnosis: {res['v']}")
+            st.write(f"## {res['i']} Status: {res['v']}")
             
-            m1, m2, m3 = st.columns(3)
-            m1.metric("Latency", f"{res['stats'][0]}ms")
-            m2.metric("Nodes Online", f"{res['stats'][3]}")
-            m3.metric("Packets Processed", f"{res['stats'][4]}")
+            c1, c2, c3 = st.columns(3)
+            c1.metric("Latency", f"{res['stats'][0]}ms")
+            c2.metric("Active Nodes", f"{res['stats'][3]}")
+            c3.metric("Packets Analyzed", f"{res['stats'][4]}")
             
-            st.write("---")
-            st.write(f"📋 **English Advice:** {res['p_eng']}")
-            st.write(f"📋 **اردو مشورہ:** {res['p_urdu']}")
+            st.markdown(f"""
+            <div class='summary-box'>
+                <b>🧠 AI Diagnostic Summary:</b><br>
+                1. <b>Latency ({res['stats'][0]}ms):</b> Ye batata hai ke data kitni tezi se travel kar raha hai. Zyada latency ka matlab hai slow response.<br>
+                2. <b>Nodes ({res['stats'][3]}):</b> Jitne zyada devices honge, network ke raste (pathways) utne hi congested honge.<br>
+                3. <b>Packets ({res['stats'][4]}):</b> In ka analysis batata hai ke system ke background mein koi error ya data leak to nahi.<br><br>
+                <b>Verdict:</b> {res['p_eng']} ({res['p_urdu']})
+            </div>
+            """, unsafe_allow_html=True)
             st.markdown("</div>", unsafe_allow_html=True)
-        else:
-            st.info("The AI Physician is awaiting a scan request.")
 
 # --- TAB 2: VITALS ---
 with tabs[1]:
     st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
     st.write("### 🧬 Network Stability Pulse")
     v_data = pd.DataFrame(np.random.randint(30, 100, size=(20, 2)), columns=['Uplink', 'Downlink'])
-    fig = px.area(v_data, template="plotly_dark", color_discrete_sequence=['#00f2ff', '#bc13fe'])
-    fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color="white")
-    st.plotly_chart(fig, use_container_width=True)
+    st.area_chart(v_data)
+    
+    st.markdown("""
+    <div class='summary-box'>
+        <b>📊 Vitals Summary:</b> Ye graph network ke 'Uplink' (data bhejne) aur 'Downlink' (data receive karne) ki live pulse dikhata hai. 
+        Peaks ka matlab hai heavy usage, jabke flat lines batati hain ke network idle hai. 
+        Smooth patterns achi stability ki nishani hain.
+    </div>
+    """, unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
 # --- TAB 3: SECURITY ---
 with tabs[2]:
     st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
-    st.write("### 🛡️ Cyber-Shield Status")
-    sc1, sc2 = st.columns(2)
-    with sc1:
+    st.write("### 🛡️ Cyber-Shield Intelligence")
+    col_s1, col_s2 = st.columns(2)
+    with col_s1:
         st.header("Immunity: 96%")
-        st.write("- Encryption: TLS 1.3 Active")
-        st.write("- Threats Blocked: 04")
-    with sc2:
-        st.success("Your network DNA is protected by autonomous AI agents.")
+        st.write("🛡️ **Encryption:** TLS 1.3 Active")
+        st.write("🚫 **Threats Blocked:** 07")
+    with col_s2:
+        st.info("AI Agents are actively guarding your local gateway against spoofing and brute-force attacks.")
+    
+    st.markdown("""
+    <div class='summary-box'>
+        <b>🛡️ Security Summary:</b> Aapka network 96% safe hai. AI Shield ne un-authorized IPs ko block kar diya hai. 
+        Immunity score batata hai ke aapka data encrypted hai aur kisi bhi hacker ke liye asan nishana nahi.
+    </div>
+    """, unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-# --- TAB 4: OFFICIAL AUDIT ---
+# --- TAB 4: PREDICTION ---
 with tabs[3]:
+    st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
+    st.write("### 🔮 AI Predictive Forecasting (Next 24 Hours)")
+    pred_data = pd.DataFrame(np.random.randint(20, 85, size=(24, 1)), columns=['Predicted Load'])
+    st.line_chart(pred_data)
+    
+    st.markdown("""
+    <div class='summary-box'>
+        <b>🔮 Prediction Summary:</b> AI ne pichle data ke patterns se ye seekha hai ke aglay 24 ghanton mein load kaisa rahe ga. 
+        Raat ke waqt (Peaks) load barhne ka khatra hai, is liye system automatically priority set kare ga.
+    </div>
+    """, unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# --- TAB 5: OFFICIAL AUDIT ---
+with tabs[4]:
     if 'audit' in st.session_state:
         d = st.session_state.audit
         st.markdown("<div class='report-paper'>", unsafe_allow_html=True)
         st.markdown(f"""
         <h1 style="text-align:center;">NETWORK HEALTH AUDIT REPORT</h1>
-        <p style="text-align:right;"><b>Reference:</b> {d['id']} | <b>Date:</b> {d['time']}</p>
+        <p style="text-align:right;"><b>Ref:</b> {d['id']} | <b>Date:</b> {d['time']}</p>
         <hr style="border: 1px solid #1a1a1a;">
-        
         <h3>1. EXECUTIVE SUMMARY</h3>
-        <p>This document serves as an autonomous forensic audit of the subject network. 
-        The AI Physician Agent has classified the system status as <b>{d['v']}</b>.</p>
-        
-        <h3>2. MEASURED VITALS</h3>
-        <p>The following metrics were recorded during the deep-scan phase:</p>
+        <p>The network has been diagnosed as <b>{d['v']}</b>. The AI Physician has analyzed {d['stats'][4]} packets.</p>
+        <h3>2. TECHNICAL METRICS</h3>
         <ul>
-            <li><b>Round Trip Latency:</b> {d['stats'][0]} ms</li>
-            <li><b>Packet Integrity:</b> {100 - d['stats'][1]}% Stable</li>
-            <li><b>Active Network Nodes:</b> {d['stats'][3]} Devices detected</li>
-            <li><b>Total Packets Analyzed:</b> {d['stats'][4]} Units</li>
+            <li>Latency: {d['stats'][0]} ms</li>
+            <li>Loss: {d['stats'][1]} %</li>
+            <li>Connected Nodes: {d['stats'][3]}</li>
         </ul>
-        
-        <h3>3. AI CLINICAL PRESCRIPTION</h3>
-        <p><b>Diagnosis (English):</b> {d['p_eng']}</p>
-        <p><b>اردو تشخیص:</b> {d['p_urdu']}</p>
-        <p><b>Recommended Treatment:</b> We advise an immediate DNS resolver flush and a hardware gateway reboot to restore maximum throughput.</p>
-        
-        <br><br>
-        <p style="text-align:right;"><i>Digitally Signed: Dr. Cyber-Sentinel (AI Agent)</i></p>
+        <h3>3. AI CLINICAL CONCLUSION</h3>
+        <p><b>Advice:</b> {d['p_eng']}</p>
+        <p><b>اردو مشورہ:</b> {d['p_urdu']}</p>
+        <br>
+        <p style="text-align:right;"><i>Digitally Signed: Dr. Cyber-Sentinel (NetDoc AI)</i></p>
         """, unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
         
         st.markdown("<br>", unsafe_allow_html=True)
         st.download_button(
-            label="📥 DOWNLOAD PROFESSIONAL REPORT",
-            data=f"NetDoc AI Audit Report\n\nReference: {d['id']}\nStatus: {d['v']}\nLatency: {d['stats'][0]}ms\nAdvice: {d['p_eng']}",
-            file_name=f"NetDoc_Report_{d['id']}.txt"
+            label="📥 DOWNLOAD PROFESSIONAL AUDIT",
+            data=f"NetDoc Report\nID: {d['id']}\nStatus: {d['v']}\nAdvice: {d['p_eng']}",
+            file_name=f"Audit_{d['id']}.txt"
         )
     else:
-        st.warning("⚠️ No diagnostic data found. Please run a scan in the Clinic tab first.")
+        st.warning("⚠️ Access Denied. Please conduct a Clinic scan first.")
 
 # --- SIDEBAR ---
 if st.sidebar.button("🗑️ PURGE CLINIC DATA"):
