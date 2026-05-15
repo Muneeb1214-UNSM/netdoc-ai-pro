@@ -8,137 +8,178 @@ import requests
 import time
 import random
 
-# --- MODERN UI SETUP ---
-st.set_page_config(page_title="AI-QoS Optimizer", layout="wide", page_icon="⚡")
+# --- PAGE CONFIG ---
+st.set_page_config(page_title="QoS-Flow AI", layout="wide", page_icon="⚡")
 
+# --- ULTRA-MODERN CSS ---
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap');
-    html, body, [class*="css"] { font-family: 'Space Grotesk', sans-serif; background-color: #040911; color: #e0e0e0; }
-    .stApp { background: radial-gradient(circle, #0a192f 0%, #040911 100%); }
-    .status-card {
-        background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(0, 255, 255, 0.2);
-        border-radius: 15px; padding: 25px; backdrop-filter: blur(10px);
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500&display=swap');
+    
+    /* Background & Global Styles */
+    .stApp {
+        background: radial-gradient(circle at center, #0a192f 0%, #02050a 100%);
+        color: #e0e0e0;
+        font-family: 'Rajdhani', sans-serif;
     }
-    .neon-text { color: #00f2ff; text-shadow: 0 0 10px #00f2ff; }
-    header {visibility: hidden;} footer {visibility: hidden;}
+
+    /* Glassmorphism Card Style */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(15px);
+        border-radius: 20px;
+        padding: 25px;
+        border: 1px solid rgba(0, 242, 255, 0.2);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+        transition: 0.3s ease-in-out;
+    }
+    .glass-card:hover {
+        border: 1px solid rgba(0, 242, 255, 0.5);
+        box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+    }
+
+    /* Neon Titles */
+    .neon-title {
+        font-family: 'Orbitron', sans-serif;
+        color: #00f2ff;
+        text-shadow: 0 0 10px #00f2ff, 0 0 20px #00f2ff;
+        text-align: center;
+        letter-spacing: 2px;
+    }
+
+    /* Custom Metrics */
+    .metric-value {
+        font-size: 30px;
+        font-weight: bold;
+        color: #00f2ff;
+    }
+    
+    header {visibility: hidden;}
+    footer {visibility: hidden;}
     </style>
     """, unsafe_allow_html=True)
 
-# --- LOAD ASSETS ---
+# --- ASSETS LOADING ---
 def load_lottie(url):
-    try: return requests.get(url, timeout=5).json()
-    except: return None
+    try:
+        r = requests.get(url, timeout=5)
+        return r.json() if r.status_code == 200 else None
+    except:
+        return None
 
-lottie_speed = load_lottie("https://lottie.host/8553641b-10f7-434a-9524-71e98822588c/OayXwS3S0R.json")
+# Naya fast aur stable animation
+lottie_ai_brain = load_lottie("https://lottie.host/8553641b-10f7-434a-9524-71e98822588c/OayXwS3S0R.json")
 
-# --- AI QoS ENGINE (Simulation) ---
+# --- DATA STATE ---
 if 'qos_history' not in st.session_state:
-    st.session_state.qos_history = pd.DataFrame(columns=["Time", "Activity", "Priority", "Latency", "Bandwidth"])
+    st.session_state.qos_history = pd.DataFrame(columns=["Time", "App", "Priority", "Ping", "Allocated_BW"])
 
-def run_ai_optimizer(mode):
-    activities = ["Gaming", "Video Call", "Netflix", "File Download", "Web Browsing"]
-    current_act = random.choice(activities) if mode == "Auto" else mode
+def run_ai_logic(mode):
+    # Simulated Network Behavior
+    apps = ["Discord (Voice)", "Zoom Meeting", "Steam (Gaming)", "Netflix 4K", "Windows Update"]
+    app = random.choice(apps)
     
-    # AI Logic: Assign priority and simulate latency/bandwidth
-    if current_act in ["Gaming", "Video Call"]:
-        priority = "Critical"
-        latency = random.randint(10, 30)
-        bw = random.randint(70, 95) # High bandwidth allocation
-    elif current_act == "Netflix":
-        priority = "Medium"
-        latency = random.randint(40, 80)
-        bw = random.randint(50, 70)
+    # Priority Logic based on User Choice
+    if mode == "Gaming Mode" and "Steam" in app:
+        priority, ping, bw = "⚡ CRITICAL", random.randint(15, 30), random.randint(85, 98)
+    elif mode == "Work Mode" and ("Zoom" in app or "Discord" in app):
+        priority, ping, bw = "💎 HIGH", random.randint(30, 60), random.randint(70, 90)
     else:
-        priority = "Low"
-        latency = random.randint(100, 250)
+        priority = "🔹 NORMAL"
+        ping = random.randint(100, 250)
         bw = random.randint(10, 40)
 
     new_data = {
         "Time": time.strftime("%H:%M:%S"),
-        "Activity": current_act,
+        "App": app,
         "Priority": priority,
-        "Latency": latency,
-        "Bandwidth": bw
+        "Ping": ping,
+        "Allocated_BW": bw
     }
+    
     st.session_state.qos_history = pd.concat([st.session_state.qos_history, pd.DataFrame([new_data])], ignore_index=True)
-    if len(st.session_state.qos_history) > 20:
+    if len(st.session_state.qos_history) > 15:
         st.session_state.qos_history = st.session_state.qos_history.iloc[1:]
     return new_data
 
 # --- APP LAYOUT ---
-st.markdown("<h1 class='neon-text' style='text-align:center;'>AI-POWERED QoS OPTIMIZER</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center;'>Smart Bandwidth Allocation & Network Latency Control</p>", unsafe_allow_html=True)
+st.markdown("<h1 class='neon-title'>QoS-FLOW AI COMMANDER</h1>", unsafe_allow_html=True)
 
-# Dashboard Control
-st.sidebar.title("⚡ QoS CONTROL")
-mode_select = st.sidebar.selectbox("Optimization Mode", ["Auto-AI", "Gaming Mode", "Work Mode (Meeting)", "Power Saver"])
+# Sidebar with glass look
+st.sidebar.markdown("<h2 style='color:#00f2ff; font-family:Orbitron;'>CONTROL PANEL</h2>", unsafe_allow_html=True)
+st.sidebar.write("Configure AI Priority Level:")
+mode = st.sidebar.selectbox("Optimization Profile", ["Auto AI", "Gaming Mode", "Work Mode", "Silent Background"])
 
 st.sidebar.markdown("---")
-st.sidebar.write("### AI Agent Status")
-st.sidebar.success("🟢 Agent Online")
-st.sidebar.info("AI is dynamically analyzing packet bursts to reduce jitter.")
+st.sidebar.info("🤖 AI is currently re-routing packets through the fastest gateway to minimize jitter.")
 
-# Main Screen
-col1, col2 = st.columns([1, 2])
+# Main Dashboard
+col_main, col_side = st.columns([2, 1])
 
-with col1:
-    st.markdown("<div class='status-card'>", unsafe_allow_html=True)
-    st.write("### AI Agent Insights")
-    if lottie_speed: st_lottie(lottie_speed, height=200)
+with col_side:
+    st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
+    st.write("### AI STATUS")
+    if lottie_ai_brain:
+        st_lottie(lottie_ai_brain, height=180, key="brain")
+    else:
+        st.markdown("<h1 style='text-align:center;'>🧠</h1>", unsafe_allow_html=True)
     
-    # Process AI Logic
-    current_mode = mode_select.split(" ")[0] if "Mode" in mode_select else "Auto"
-    current_stats = run_ai_optimizer(current_mode)
+    current = run_ai_logic(mode)
     
-    st.write(f"**Detecting:** {current_stats['Activity']}")
-    st.write(f"**AI Priority:** {current_stats['Priority']}")
+    st.write(f"**Detecting Activity:**")
+    st.markdown(f"<p class='metric-value'>{current['App']}</p>", unsafe_allow_html=True)
+    st.write(f"**AI Assigned Priority:**")
+    st.write(current['Priority'])
+    st.markdown("</div>", unsafe_allow_html=True)
     
-    # Gauge Chart for Latency
-    fig_gauge = go.Figure(go.Indicator(
+    # Latency Meter
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
+    st.write("### NETWORK PING")
+    fig_ping = go.Figure(go.Indicator(
         mode = "gauge+number",
-        value = current_stats['Latency'],
-        title = {'text': "Latency (ms)"},
-        gauge = {'axis': {'range': [None, 300]},
+        value = current['Ping'],
+        domain = {'x': [0, 1], 'y': [0, 1]},
+        gauge = {'axis': {'range': [None, 300], 'tickcolor': "#00f2ff"},
                  'bar': {'color': "#00f2ff"},
                  'steps': [
-                     {'range': [0, 50], 'color': "green"},
-                     {'range': [50, 150], 'color': "yellow"},
-                     {'range': [150, 300], 'color': "red"}]}
+                     {'range': [0, 60], 'color': "rgba(0, 255, 0, 0.1)"},
+                     {'range': [60, 150], 'color': "rgba(255, 255, 0, 0.1)"},
+                     {'range': [150, 300], 'color': "rgba(255, 0, 0, 0.1)"}]}
     ))
-    fig_gauge.update_layout(paper_bgcolor='rgba(0,0,0,0)', font={'color': "white"}, height=250)
-    st.plotly_chart(fig_gauge, use_container_width=True)
+    fig_ping.update_layout(paper_bgcolor='rgba(0,0,0,0)', font={'color': "white", 'family': "Rajdhani"}, height=200, margin=dict(l=20, r=20, t=30, b=0))
+    st.plotly_chart(fig_ping, use_container_width=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-with col2:
-    st.markdown("<div class='status-card'>", unsafe_allow_html=True)
-    st.write("### Bandwidth Allocation (AI Optimized)")
+with col_main:
+    st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
+    st.write("### LIVE BANDWIDTH OPTIMIZATION")
     
-    hist_df = st.session_state.qos_history
-    fig_line = px.line(hist_df, x="Time", y="Bandwidth", color="Priority", 
-                       title="Live Bandwidth Distribution", template="plotly_dark")
-    fig_line.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
-    st.plotly_chart(fig_line, use_container_width=True)
+    df = st.session_state.qos_history
+    if not df.empty:
+        fig_line = px.area(df, x="Time", y="Allocated_BW", title="Real-time Resource Allocation",
+                          color_discrete_sequence=['#00f2ff'])
+        fig_line.update_layout(
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            font_color="#e0e0e0",
+            xaxis=dict(showgrid=False),
+            yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.05)')
+        )
+        st.plotly_chart(fig_line, use_container_width=True)
     
-    st.write("### Real-time Agent Logs")
-    st.table(hist_df.tail(5))
+    st.write("### TRANSACTION LOGS")
+    st.dataframe(df.iloc[::-1], use_container_width=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-# Explainable AI Section
-st.markdown("---")
-exp_col1, exp_col2 = st.columns(2)
-with exp_col1:
-    st.write("### 🧠 How AI Optimizes?")
-    st.write("""
-    1. **Traffic Identification:** AI packets ki 'burstiness' aur 'size' dekh kar activity pehchanta hai.
-    2. **Dynamic Queuing:** Gaming packets ko priority queue mein dalta hai taake delay kam ho.
-    3. **Resource Throttling:** Background downloads ko temporarily slow karta hai taake video call na rukay.
-    """)
-with exp_col2:
-    st.write("### 📈 Network Health")
-    st.progress(random.randint(85, 100))
-    st.write("Current Optimization Efficiency: **94.2%**")
+# Bottom Section
+st.markdown("<br>", unsafe_allow_html=True)
+b1, b2 = st.columns(2)
+with b1:
+    st.markdown("<div class='glass-card'><h4>💡 System Tip</h4>AI has detected a background Windows Update and throttled it to save 40% bandwidth for your Meeting.</div>", unsafe_allow_html=True)
+with b2:
+    st.markdown("<div class='glass-card'><h4>🛡️ Efficiency</h4>The current QoS profile is reducing jitter by 12ms using Predictive Queuing.</div>", unsafe_allow_html=True)
 
-# Auto-refresh
+# Smooth auto-refresh
 time.sleep(2)
 st.rerun()
