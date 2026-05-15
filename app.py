@@ -1,4 +1,4 @@
- import streamlit as st
+import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
@@ -10,6 +10,7 @@ import random
 # --- SETTING UP MODERN THEME ---
 st.set_page_config(page_title="NetGuard AI", layout="wide", page_icon="🛡️")
 
+# Custom CSS
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
@@ -26,8 +27,11 @@ st.markdown("""
 
 # --- LOAD ASSETS ---
 def load_lottie(url):
-    try: return requests.get(url).json()
-    except: return None
+    try:
+        r = requests.get(url, timeout=5)
+        return r.json() if r.status_code == 200 else None
+    except:
+        return None
 
 lottie_secure = load_lottie("https://lottie.host/8553641b-10f7-434a-9524-71e98822588c/OayXwS3S0R.json")
 
@@ -35,20 +39,11 @@ lottie_secure = load_lottie("https://lottie.host/8553641b-10f7-434a-9524-71e9882
 def get_device_data():
     devices = [
         {"Device": "Smart TV", "IP": "192.168.1.10", "Activity": "Streaming", "Risk": "Low", "Data_Sent": "1.2 GB"},
-        {"Device": "CCTV Camera", "IP": "192.168.1.15", "Activity": "Uploading to Unknown Server", "Risk": "High", "Data_Sent": "450 MB"},
+        {"Device": "CCTV Camera", "IP": "192.168.1.15", "Activity": "Unknown Server Sync", "Risk": "High", "Data_Sent": "450 MB"},
         {"Device": "iPhone 15", "IP": "192.168.1.5", "Activity": "Browsing", "Risk": "Low", "Data_Sent": "80 MB"},
         {"Device": "Smart Fridge", "IP": "192.168.1.20", "Activity": "Idle", "Risk": "Medium", "Data_Sent": "5 MB"}
     ]
     return pd.DataFrame(devices)
-
-# --- AI ADVISOR LOGIC ---
-def get_ai_advice(score):
-    if score > 80:
-        return "✅ Aapka Network safe hai. Tamam devices sahi kaam kar rahe hain."
-    elif score > 50:
-        return "⚠️ Kuch devices (CCTV/Fridge) zyada data bhej rahe hain. Unki settings check karein."
-    else:
-        return "🚨 Khatra! Aapka privacy score bohot kam hai. Kisi ne unauthorized access kiya hai."
 
 # --- NAVIGATION ---
 st.sidebar.title("🛡️ NetGuard AI")
@@ -58,13 +53,11 @@ if menu == "Home Dashboard":
     st.markdown("<h1 style='text-align:center;'>NetGuard AI Guardian</h1>", unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns([1, 1, 1])
-    
-    # Calculate Score
-    privacy_score = random.randint(45, 95)
+    privacy_score = random.randint(55, 98)
     
     with col1:
         st.markdown("<div class='status-card'>", unsafe_allow_html=True)
-        st.write("### Network Health")
+        st.write("### Privacy Score")
         if privacy_score > 70:
             st.markdown(f"<p class='score-high'>{privacy_score}%</p>", unsafe_allow_html=True)
             st.write("Status: Secure")
@@ -74,35 +67,38 @@ if menu == "Home Dashboard":
         st.markdown("</div>", unsafe_allow_html=True)
 
     with col2:
-        if lottie_secure: st_lottie(lottie_secure, height=150)
+        if lottie_secure:
+            st_lottie(lottie_secure, height=150, key="home_anim")
+        else:
+            st.markdown("<h1 style='text-align:center;'>🛡️</h1>", unsafe_allow_html=True)
     
     with col3:
         st.markdown("<div class='status-card'>", unsafe_allow_html=True)
-        st.write("### AI Summary")
-        st.info(get_ai_advice(privacy_score))
+        st.write("### AI Analysis")
+        if privacy_score > 75:
+            st.success("✅ Your home network is currently safe.")
+        else:
+            st.warning("⚠️ High data usage detected in CCTV.")
         st.markdown("</div>", unsafe_allow_html=True)
 
-    st.write("### Active Devices on your Wi-Fi")
+    st.write("### Network Devices")
     df = get_device_data()
-    st.table(df)
+    st.dataframe(df, use_container_width=True)
 
-    # Traffic Graph
-    st.write("### Data Usage Trend")
-    fig = px.bar(df, x='Device', y='Data_Sent', color='Risk', template="plotly_dark",
-                 color_discrete_map={"Low": "#238636", "Medium": "#e3b341", "High": "#da3633"})
+    fig = px.pie(df, names='Device', values=[1.2, 0.45, 0.08, 0.005], title="Traffic Distribution", hole=0.4)
+    fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color="white")
     st.plotly_chart(fig, use_container_width=True)
 
 elif menu == "Privacy Scan":
-    st.header("Deep Privacy Inspection")
-    if st.button("Start Deep Scan"):
-        with st.spinner("Analyzing Packet Patterns..."):
-            time.sleep(3)
-            st.warning("Detection: CCTV Camera is sending unencrypted packets to a server in Russia.")
-            st.error("Action Required: Block IP 45.12.11.0 on your router.")
-            st.image("https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=SecurityScanComplete")
+    st.header("Deep Network Scan")
+    if st.button("Start AI Scan"):
+        with st.spinner("Analyzing traffic patterns..."):
+            time.sleep(2)
+            st.error("Alert: CCTV Camera (192.168.1.15) is sending data to a blacklisted IP in Russia.")
+            st.info("Suggestion: Update camera firmware and change password.")
 
 elif menu == "AI Assistant":
-    st.header("Ask NetGuard AI")
-    user_input = st.text_input("Ask anything (e.g. Is my Wi-Fi safe?)")
-    if user_input:
-        st.write("🤖 **AI Agent:** Aapka Smart TV filhal Amazon servers se connect hai jo ke normal hai. Lekin aapka CCTV camera suspicious behavior dikha raha hai. Kya aap usay block karna chahte hain?")
+    st.header("NetGuard AI Assistant")
+    user_query = st.text_input("Ask about your network safety:")
+    if user_query:
+        st.write("🤖 **NetGuard AI:** I analyzed your Smart TV. It's only connecting to Netflix and YouTube servers, which is 100% safe.")
