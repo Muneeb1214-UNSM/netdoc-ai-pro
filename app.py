@@ -1,4 +1,5 @@
-import streamlit as st
+
+        import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
@@ -10,63 +11,86 @@ import time
 import random
 
 # --- ADVANCED UI CONFIG ---
-st.set_page_config(page_title="NetDoc AI Pro | Cyber-Physician", layout="wide", page_icon="🩺")
+st.set_page_config(page_title="NetDoc AI Pro | Elite Cyber-Physician", layout="wide", page_icon="🩺")
 
-# --- CUSTOM CSS (THE WOW FACTOR) ---
+# --- DARK CYBERPUNK CSS (THE WOW FACTOR) ---
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;500;700&display=swap');
     
     html, body, [class*="css"] {
-        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-family: 'Rajdhani', sans-serif;
+        background-color: #020617;
+        color: #f8fafc;
     }
     
     .stApp {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        background: radial-gradient(circle at 50% -20%, #1e293b 0%, #020617 80%);
     }
 
-    /* Glassmorphism Design */
+    /* Glassmorphism Neon Cards */
     .glass-card {
-        background: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(15px);
-        border-radius: 24px;
-        padding: 35px;
-        border: 1px solid rgba(255, 255, 255, 0.6);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.05);
-        margin-bottom: 30px;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 30px;
+        border: 1px solid rgba(0, 245, 212, 0.2);
+        box-shadow: 0 0 20px rgba(0, 245, 212, 0.05);
+        margin-bottom: 25px;
+        transition: 0.4s ease;
+    }
+    .glass-card:hover {
+        border: 1px solid rgba(0, 245, 212, 0.5);
+        box-shadow: 0 0 30px rgba(0, 245, 212, 0.15);
     }
 
     .neon-title {
-        font-size: 60px; font-weight: 800; text-align: center;
-        background: linear-gradient(to right, #1e3a8a, #3b82f6);
-        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        margin-bottom: 10px;
+        font-size: 65px; font-weight: 700; text-align: center;
+        color: #00f5d4;
+        text-shadow: 0 0 20px rgba(0, 245, 212, 0.6);
+        margin-bottom: 5px;
     }
 
-    .prescription-paper {
-        background: white; border: 2px solid #e2e8f0;
-        border-radius: 10px; padding: 25px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    .status-badge {
+        background: rgba(0, 245, 212, 0.1);
+        color: #00f5d4;
+        padding: 5px 15px;
+        border-radius: 50px;
+        border: 1px solid #00f5d4;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .report-paper {
+        background: #0f172a;
+        border: 1px dashed #00f5d4;
+        padding: 40px;
+        border-radius: 5px;
+        color: #94a3b8;
         font-family: 'Courier New', Courier, monospace;
     }
 
-    .pulse-btn {
-        background: linear-gradient(90deg, #3b82f6, #1d4ed8);
-        color: white !important; border: none; border-radius: 50px;
-        padding: 15px 40px; font-weight: bold; font-size: 18px;
-        transition: 0.3s ease;
+    /* Pulse Animation */
+    .pulse-dot {
+        height: 12px; width: 12px; background-color: #00f5d4;
+        border-radius: 50%; display: inline-block;
+        box-shadow: 0 0 10px #00f5d4;
+        animation: pulse 1.5s infinite;
+        margin-right: 10px;
     }
-    
+    @keyframes pulse { 0% { transform: scale(0.9); opacity: 1; } 70% { transform: scale(1.3); opacity: 0.5; } 100% { transform: scale(0.9); opacity: 1; } }
+
     header {visibility: hidden;} footer {visibility: hidden;}
     </style>
     """, unsafe_allow_html=True)
 
-# --- AI DIAGNOSIS ENGINE ---
+# --- AI DIAGNOSIS CORE ---
 @st.cache_resource
 def train_physician_ai():
     # Latency, Loss, Jitter, Devices, Signal
-    X = np.array([[20, 0, 2, 3, 95], [180, 8, 35, 12, 35], [45, 1, 6, 2, 88], [350, 15, 60, 5, 25], [90, 0, 12, 28, 80], [12, 0, 1, 1, 99]])
-    y = np.array([0, 1, 0, 4, 1, 0]) # 0: Healthy, 1: Congested, 4: ISP Issue
+    X = np.array([[20, 0, 2, 3, 95], [210, 10, 45, 18, 30], [50, 1, 8, 4, 85], [400, 18, 70, 6, 20], [95, 0, 15, 30, 75], [12, 0, 1, 1, 99]])
+    y = np.array([0, 1, 0, 4, 1, 0])
     model = RandomForestClassifier(n_estimators=100)
     model.fit(X, y)
     return model
@@ -81,76 +105,76 @@ def load_lottie(url):
     except: return None
 
 lottie_doc = load_lottie("https://lottie.host/8553641b-10f7-434a-9524-71e98822588c/OayXwS3S0R.json")
-lottie_scanning = load_lottie("https://lottie.host/57a731d6-d3a3-4809-9683-16a707165089/y8Z9Fk1G4R.json")
 
 # --- APP LAYOUT ---
-st.markdown("<h1 class='neon-title'>NetDoc AI Pro</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; color:#475569; font-size:18px;'>Autonomous Neural Network Diagnostics & Digital Forensic Laboratory</p>", unsafe_allow_html=True)
+st.markdown("<h1 class='neon-title'>NETDOC AI PRO</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; color:#94a3b8;'>Autonomous Neural Forensics & Network Bio-Diagnosis Suite</p>", unsafe_allow_html=True)
 
-tabs = st.tabs(["🏥 Cyber-Clinic", "🧬 Neural Pulse", "🧪 Forensic Lab", "📜 Professional Report"])
+tabs = st.tabs(["🏥 CYBER-CLINIC", "🧬 NEURAL PULSE", "🧪 FORENSIC LAB", "📜 MEDICAL AUDIT"])
 
-# --- TAB 1: CLINIC ---
+# --- TAB 1: CYBER-CLINIC ---
 with tabs[0]:
-    col_l, col_r = st.columns([1, 1.2])
+    col_l, col_r = st.columns([1, 1.3])
     
     with col_l:
         st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
+        st.markdown("<div><span class='pulse-dot'></span><span class='status-badge'>Physician Online</span></div><br>", unsafe_allow_html=True)
         if lottie_doc: st_lottie(lottie_doc, height=250, key="doc_main")
         else: st.markdown("<h1 style='text-align:center;'>🩺</h1>", unsafe_allow_html=True)
         
-        st.write("### New Patient Diagnosis")
-        if st.button("🚀 INITIATE SCAN"):
-            with st.spinner("Conducting Deep Bio-Metric Scan..."):
-                time.sleep(3)
-                lat, loss, jit, devs, sig = random.randint(15, 380), random.randint(0, 15), random.randint(2, 65), random.randint(1, 35), random.randint(15, 99)
+        st.write("### AI Diagnostic Interface")
+        if st.button("🚀 INITIATE BIO-SCAN"):
+            with st.spinner("Decoding Network DNA..."):
+                time.sleep(2.5)
+                # Simulating realistic network metrics
+                lat, loss, jit, devs, sig = random.randint(10, 400), random.randint(0, 15), random.randint(2, 70), random.randint(1, 40), random.randint(10, 99)
                 pred = ai_model.predict([[lat, loss, jit, devs, sig]])[0]
                 
                 diagnosis_map = {
-                    0: ("Optimum Health", "System DNA is clean. All vitals within normal range.", "🟢"),
-                    1: ("Hyper-Congestion", "Network respiratory pathways clogged by excessive device load.", "🟡"),
-                    4: ("ISP Degradation", "Detected high-level gateway failure. Signal routing is unstable.", "🔴")
+                    0: ("System Optimum", "Network DNA is pure. Throughput is at maximum potential.", "🟢"),
+                    1: ("Hyper-Congestion", "Pathways clogged by excessive node interference.", "🟡"),
+                    4: ("Gateway Failure", "Critical ISP routing degradation detected.", "🔴")
                 }
-                st.session_state.data = {
+                
+                # FIXED: Consistent State Mapping
+                st.session_state.doc_data = {
                     "v": diagnosis_map.get(pred, diagnosis_map[1])[0],
                     "p": diagnosis_map.get(pred, diagnosis_map[1])[1],
                     "i": diagnosis_map.get(pred, diagnosis_map[1])[2],
                     "s": [lat, loss, jit, devs, sig],
-                    "time": time.strftime("%Y-%m-%d %H:%M:%S")
+                    "t": time.strftime("%Y-%m-%d %H:%M:%S")
                 }
         st.markdown("</div>", unsafe_allow_html=True)
 
     with col_r:
-        if 'data' in st.session_state:
-            res = st.session_state.data
+        if 'doc_data' in st.session_state:
+            data = st.session_state.doc_data
             st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
-            st.write(f"## {res['i']} Diagnosis: {res['v']}")
+            st.write(f"## {data['i']} Verdict: {data['v']}")
             
-            # Metrics Visuals
             c1, c2, c3 = st.columns(3)
-            c1.metric("Latency", f"{res['stats'][0]}ms")
-            c2.metric("Loss", f"{res['stats'][1]}%")
-            c3.metric("Nodes", f"{res['stats'][3]}")
+            c1.metric("LATENCY", f"{data['s'][0]}ms")
+            c2.metric("LOSS", f"{data['s'][1]}%")
+            c3.metric("NODES", f"{data['s'][3]}")
             
-            st.markdown("<br>", unsafe_allow_html=True)
             st.markdown(f"""
-            <div class='prescription-paper'>
-                <h4 style='color:#1e3a8a;'>PRESCRIPTION (Urgent)</h4>
-                <p><b>Rx:</b> {res['p']}</p>
-                <p><b>Advice:</b> {random.choice(['Change Wi-Fi Channel to 11', 'Enable QoS Prioritization', 'Reboot ONT Gateway'])}</p>
+            <div style='background:rgba(0,245,212,0.05); padding:20px; border-radius:15px; border-left:5px solid #00f5d4; margin-top:20px;'>
+                <h4 style='color:#00f5d4;'>Rx Prescription</h4>
+                <p><b>Finding:</b> {data['p']}</p>
+                <p><b>AI Advice:</b> {random.choice(['Re-route via Layer 2 Switch', 'Flush DNS Cache', 'Enable Autonomous QoS'])}</p>
             </div>
             """, unsafe_allow_html=True)
             st.markdown("</div>", unsafe_allow_html=True)
         else:
-            if lottie_scanning: st_lottie(lottie_scanning, height=350, key="scan_l")
-            st.info("The AI Physician is awaiting a scan request.")
+            st.markdown("<div class='glass-card' style='text-align:center;'><h3>Awaiting Bio-Metric Input...</h3><p>Click the Scan button to analyze network health.</p></div>", unsafe_allow_html=True)
 
 # --- TAB 2: NEURAL PULSE ---
 with tabs[1]:
     st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
-    st.write("### 🧬 Real-Time Neural Pulse (Stability Trend)")
-    pulse_data = pd.DataFrame(np.random.randint(20, 100, size=(25, 2)), columns=['Download Mbps', 'Upload Mbps'])
-    fig_pulse = px.line(pulse_data, template="plotly_white", color_discrete_sequence=['#3b82f6', '#10b981'])
-    fig_pulse.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+    st.write("### 🧬 Neural Pulse Activity (Live Trends)")
+    pulse_df = pd.DataFrame(np.random.randint(20, 100, size=(30, 2)), columns=['Uplink', 'Downlink'])
+    fig_pulse = px.area(pulse_df, template="plotly_dark", color_discrete_sequence=['#00f5d4', '#f15bb5'])
+    fig_pulse.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_family="Rajdhani")
     st.plotly_chart(fig_pulse, use_container_width=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -160,26 +184,37 @@ with tabs[2]:
     with col_a:
         st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
         st.write("#### 🧪 Traffic Anatomy")
-        # Fixed Sunburst
+        # FIXED Sunburst Logic
         df_sun = pd.DataFrame({
-            "Layer": ["L4-TCP", "L4-TCP", "L4-UDP", "L7-App", "L7-App"],
-            "Protocol": ["Clean", "Retry", "Streaming", "HTTPS", "DNS"],
-            "Vol": [40, 15, 25, 50, 10]
+            "Layer": ["TCP", "TCP", "UDP", "Encryption", "Encryption"],
+            "Protocol": ["Clean", "Retry", "Stream", "TLS 1.3", "SSL"],
+            "Value": [50, 10, 25, 40, 5]
         })
-        fig_sun = px.sunburst(df_sun, path=['Layer', 'Protocol'], values='Vol', color_discrete_sequence=px.colors.qualitative.Bold)
+        fig_sun = px.sunburst(df_sun, path=['Layer', 'Protocol'], values='Value', color_discrete_sequence=px.colors.sequential.Tealgrn)
+        fig_sun.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_family="Rajdhani")
         st.plotly_chart(fig_sun, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
     with col_b:
         st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
-        st.write("#### 📡 Gateway Health")
-        st.write("Memory Utilization"); st.progress(62)
-        st.write("Signal Integrity"); st.progress(89)
-        st.write("Encryption Strength"); st.progress(98)
+        st.write("#### 🛰️ Hardware Vitality")
+        st.write("Processing Load"); st.progress(random.randint(30, 80))
+        st.write("Radio Frequency Integrity"); st.progress(random.randint(60, 95))
+        st.write("Buffer Saturation"); st.progress(random.randint(10, 40))
         st.markdown("</div>", unsafe_allow_html=True)
 
-# --- TAB 4: PROFESSIONAL REPORT ---
+# --- TAB 4: MEDICAL AUDIT (DETAILED REPORT) ---
 with tabs[3]:
-    if 'data' in st.session_state:
-        res = st.session_state.data
+    if 'doc_data' in st.session_state:
+        d = st.session_state.doc_data
         st.markdown("<div class='glass-card'>", unsafe_allow_html=True)
-        s
+        st.markdown(f"""
+        <div class='report-paper'>
+            <div style='text-align:center; border-bottom: 1px solid #00f5d4; padding-bottom:20px;'>
+                <h1 style='color:#00f5d4; margin:0;'>NETWORK HEALTH AUDIT</h1>
+                <p>CERTIFIED BY NETDOC AI PRO // SESSION ID: {random.randint(1000,9999)}</p>
+                <p>TIMESTAMP: {d['t']}</p>
+            </div>
+            
+            <div style='margin-top:30px;'>
+                <h3 style='color:#00f5d4;'>1. EXECUTIVE SUMMARY</h3>
+                <
